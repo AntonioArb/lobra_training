@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
  * @group             : 
- * @last modified on  : 07-20-2023
+ * @last modified on  : 07-21-2023
  * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 **/
 
@@ -10,7 +10,7 @@
 global with sharing class RetrieveContacts {
     
     @HttpGet
-    global static CustomContact getContacts() {
+    global static CustomContactsCounter getContacts() {
         RestRequest req = RestContext.request;
         RestResponse res = RestContext.response;
 
@@ -25,21 +25,34 @@ global with sharing class RetrieveContacts {
         query += String.isBlank(contactId) ? limit20 : contIdCondition;
         myContacts = Database.query(query);
         
-        List<CustomContact> myCustomContacts = new List<CustomContact>();
 
-        String customName = myContacts.get(0).Name;
-        Id customReqId = myContacts.get(0).Id;
+        // String customName = myContacts.get(1).Name;
+        // Id customReqId = myContacts.get(1).Id;
         
-        CustomContact cContact = new CustomContact(customReqId, customName);
-        // cContact.nome_e_cognome = customName;
-        // cContact.salesforce_id = customReqId;
-        List<CustomContact> customContacts = new List<CustomContact>();
-         for (CustomContact contact : customContacts) {
+        // CustomContact cContact = new CustomContact(customReqId, customName);
+
+
+
+        CustomContactsCounter customList = new CustomContactsCounter();
+        List<CustomContact> tempContactsList = new List<CustomContact>();
+        
+
+        for (Contact contact : myContacts) {
+
+            String customName = contact.Name;
+            Id customReqId = contact.Id;
             
-         } 
+            CustomContact cContact = new CustomContact(customReqId, customName);
+            tempContactsList.add(cContact);
+            
+            // customList.numero_contact += 1;
+        } 
+    
+        customList.i_miei_custom_contact = tempContactsList;
+        customList.numero_contact = customList.i_miei_custom_contact.size();
 
 
-        return cContact;
+        return customList;
         
     }
 }
